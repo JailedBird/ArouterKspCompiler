@@ -1,9 +1,7 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
-    // id 'com.github.dcendents.android-maven'
 }
-
 
 compileJava {
     sourceCompatibility = '1.8'
@@ -22,7 +20,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 }
 
 dependencies {
-    implementation 'com.alibaba:arouter-annotation:1.0.7'
+    implementation 'com.alibaba:arouter-annotation:1.0.6'
 
     implementation 'com.squareup:javapoet:1.8.0'
 
