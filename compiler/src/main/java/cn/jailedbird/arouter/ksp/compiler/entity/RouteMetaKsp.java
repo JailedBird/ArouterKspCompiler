@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.lang.model.element.Element;
 
 public class RouteMetaKsp extends RouteMeta {
-    private KSClassDeclaration kspRawType;      // Raw type of ksp : KSClassDeclaration
+    private KSClassDeclaration kspRawTypeInner;      // Raw type of ksp : KSClassDeclaration
 
     public RouteMetaKsp(Route route, Element rawType, RouteType type, Map<String, Integer> paramsType) {
         super(type, rawType, null, route.name(), route.path(), route.group(), paramsType, route.priority(), route.extras());
@@ -26,15 +26,11 @@ public class RouteMetaKsp extends RouteMeta {
      */
     public static RouteMeta build(Route route, KSClassDeclaration kspRawType, RouteType type, Map<String, Integer> paramsType) {
         RouteMetaKsp meta = new RouteMetaKsp(route, null, type, paramsType);
-        meta.setKspRawType(kspRawType);
+        meta.kspRawTypeInner = kspRawType;
         return meta;
     }
 
-    public KSClassDeclaration getKspRawType() {
-        return kspRawType;
-    }
-
-    public void setKspRawType(KSClassDeclaration kspRawType) {
-        this.kspRawType = kspRawType;
+    public KSClassDeclaration getKspRawTypeInner() {
+        return kspRawTypeInner;
     }
 }

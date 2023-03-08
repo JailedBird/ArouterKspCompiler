@@ -2,7 +2,7 @@ package cn.jailedbird.arouter.ksp.compiler
 
 import cn.jailedbird.arouter.ksp.compiler.entity.RouteDoc
 import cn.jailedbird.arouter.ksp.compiler.entity.RouteMetaKsp
-import cn.jailedbird.arouter.ksp.compiler.entity.toKspRawType
+import cn.jailedbird.arouter.ksp.compiler.entity.kspRawType
 import cn.jailedbird.arouter.ksp.compiler.utils.*
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -136,7 +136,7 @@ class RouteSymbolProcessorProvider : SymbolProcessorProvider {
 
                 for (routeMeta in groupRouteMetas) {
                     val routeDoc = extractDocInfo(routeMeta)
-                    val element = routeMeta.toKspRawType
+                    val element = routeMeta.kspRawType
                     if (routeMeta.type == RouteType.PROVIDER) {
                         for (it in element.superTypes) {
                             val declaration = it.resolve().declaration
@@ -221,12 +221,12 @@ class RouteSymbolProcessorProvider : SymbolProcessorProvider {
                     key,
                     RouteMeta::class,
                     RouteType::class,
-                    routeMeta.toKspRawType.toClassName(),
+                    routeMeta.kspRawType.toClassName(),
                     routeMeta.path,
                     routeMeta.group
                 )
 
-                routeMeta.toKspRawType.containingFile?.let {
+                routeMeta.kspRawType.containingFile?.let {
                     groupFileDependencies.add(it)
                 }
             }
@@ -284,7 +284,7 @@ class RouteSymbolProcessorProvider : SymbolProcessorProvider {
                 )
 
                 for (item in entry.value) {
-                    item.toKspRawType.containingFile?.let {
+                    item.kspRawType.containingFile?.let {
                         dependencies.add(it)
                     }
                 }
