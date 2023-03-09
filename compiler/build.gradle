@@ -37,4 +37,4 @@ dependencies {
     implementation("com.squareup:kotlinpoet-metadata:1.11.0")
 }
 
-//apply from: rootProject.file('gradle/publish.gradle')
+apply from: rootProject.file("gradle/maven-publish.gradle")

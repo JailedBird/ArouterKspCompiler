@@ -11,6 +11,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
  * */
 internal fun KSPropertyDeclaration.typeExchange(): Int {
     val type = this.type.resolve()
+    @Suppress("KotlinConstantConditions")
     return when (type.declaration.qualifiedName?.asString()) {
         Consts.KBYTE -> TypeKind.BYTE.ordinal
         Consts.KSHORT -> TypeKind.SHORT.ordinal
