@@ -1,4 +1,4 @@
-@file:OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
+@file:OptIn(KspExperimental::class)
 
 package cn.jailedbird.arouter.ksp.compiler.utils
 
@@ -11,7 +11,6 @@ import com.google.devtools.ksp.symbol.Origin.KOTLIN
 import com.google.devtools.ksp.symbol.Origin.KOTLIN_LIB
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 
