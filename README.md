@@ -1,7 +1,7 @@
 # ArouterKspCompiler
 KSP annotation processor for Arouter
 
-ArouterKspCompiler插件是对ARouter注解处理器（`com.alibaba:arouter-compiler`）插件的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；为何使用KSP注解处理器以及其有点请参考如下引言：
+ArouterKspCompiler插件是对ARouter注解处理器（`com.alibaba:arouter-compiler`）插件的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；为何使用KSP注解处理器以及其优点请参考如下引言：
 
 >  Kotlin Symbol Processing (*KSP*) is an API that you can use to develop lightweight compiler plugins. KSP provides a simplified compiler plugin API that leverages the power of Kotlin while keeping the learning curve at a minimum. Compared to [kapt](https://kotlinlang.org/docs/kapt.html), annotation processors that use KSP can run up to 2 times faster. 
 
@@ -27,7 +27,7 @@ ArouterKspCompiler插件是对ARouter注解处理器（`com.alibaba:arouter-comp
 
 
 
-**ArouterKspCompiler中master分支默认使用kotlin 1.6.10、ksp1.6.10-1.0.4 **， 下文中kotlin版本号暂时使用1.6.10替代， 实际使用请按照项目kotlin版本、上述表格灵活替换；
+**ArouterKspCompiler中master分支默认使用kotlin 1.6.10、ksp1.6.10-1.0.4**， 下文中kotlin版本号暂时使用1.6.10替代， 实际使用请按照项目kotlin版本、上述表格灵活替换；
 
 根目录下配置ksp的版本号
 
@@ -82,7 +82,7 @@ ksp {
 
 
 
-**非要使用KSP的话, 添加'kotlin-android'插件, 否则无法触发代码生成**
+**但是只要使用KSP的话, 就需要添加'kotlin-android'插件, 否则无法触发代码生成**
 
 
 
@@ -115,7 +115,7 @@ Arouter模块中导入Ksp插件：
 ksp 'com.github.JailedBird:ArouterKspCompiler:1.6.10-1.0.0'
 ```
 
-
+此时编译项目，可以在模块build文件找到对应生成的文件， 对此大家可以通过 生成文件源码、Json路由表文件（需开启Doc配置生成）等对比去检验插件功能是否正常；
 
 ### 增量编译及其日志
 
