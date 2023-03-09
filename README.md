@@ -76,7 +76,7 @@ ksp {
 
 **注意：纯Java模块（没有'kotlin-android'插件）建议直接使用annotationProcess导入Arouter原生处理器（com.alibaba:arouter-compiler）即可； 原因如下：**
 
-- 对纯Java项目而言使用Ksp没有很大的优势，相反KSP**可能花费（个人猜测）**更多的时间去解析Java；
+- 对纯Java项目而言使用Ksp没有很大的优势，相反KSP可能花费更多的时间去兼容、解析Java；
 - Ksp虽然兼容Java， 但是兼容性不一定完美； 如可空，可变等细节上的差异，对某些java信息的获取不一定精准；
 - KSP不断在迭代， 不可避免会存在潜在的问题，因此在java模块中直接Arouter注解处理器更加安全；
 
@@ -101,12 +101,7 @@ android.sourceSets.all { it.java.srcDir("build/generated/ksp/${it.name}/kotlin/"
 项目添加jitpack仓库
 
 ```kotlin
-allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+maven { url 'https://jitpack.io' }
 ```
 
 Arouter模块中导入Ksp插件：
