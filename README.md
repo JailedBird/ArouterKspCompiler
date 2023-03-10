@@ -1,7 +1,7 @@
 # ArouterKspCompiler
 KSP annotation processor for Arouter
 
-ArouterKspCompiler插件是对ARouter注解处理器（`com.alibaba:arouter-compiler`）插件的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；为何使用KSP注解处理器以及其优点请参考如下引言：
+ArouterKspCompiler插件是对ARouter注解处理器（com.alibaba:arouter-compiler）插件的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；为何使用KSP注解处理器以及其优点请参考如下引言：
 
 >  Kotlin Symbol Processing (*KSP*) is an API that you can use to develop lightweight compiler plugins. KSP provides a simplified compiler plugin API that leverages the power of Kotlin while keeping the learning curve at a minimum. Compared to [kapt](https://kotlinlang.org/docs/kapt.html), annotation processors that use KSP can run up to 2 times faster. 
 
@@ -17,13 +17,14 @@ ArouterKspCompiler插件是对ARouter注解处理器（`com.alibaba:arouter-comp
 
 **前面提到， KSP版本号需要和kotlin匹配， 理论上KSP版本号越高， BUG越少， 因此我会打出各种kotlin版本的插件， 供大家使用**
 
-关于版本号：
+版本发布地址:https://jitpack.io/#JailedBird/ArouterKspCompiler, 版本号可做如下参考:
 
-| kotlin版本号 | 最新ArouterKspCompiler | 建议KSP插件版本号 |
-| ------------ | ---------------------- | ----------------- |
-| 1.6.10       | 1.6.10-1.0.0           | 1.6.10-1.0.4      |
-| 1.7.20       | 1.7.20-1.0.0           | 1.7.20-1.0.8      |
-| TODO...      |                        |                   |
+| kotlin版本号 | 最新ArouterKspCompiler | 建议KSP插件版本号   |
+|-----------|----------------------|--------------|
+| 1.6.10    | 1.6.10-1.0.0         | 1.6.10-1.0.4 |
+| 1.7.20    | 1.7.20-1.0.0         | 1.7.20-1.0.8 |
+| 1.7.21    | 1.7.21-1.0.0         | 1.7.21-1.0.8 |
+| TODO...   |                      |              |
 
 
 
