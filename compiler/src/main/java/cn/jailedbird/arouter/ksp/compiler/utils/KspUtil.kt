@@ -14,6 +14,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 
 @Suppress("unused")
 internal fun KSClassDeclaration.isKotlinClass(): Boolean {
@@ -112,7 +113,17 @@ internal fun String.quantifyNameToClassName(): ClassName {
  * */
 internal fun KSPropertyDeclaration.getKotlinPoetTTypeGeneric(): TypeName {
     val classTypeParams = this.typeParameters.toTypeParameterResolver()
-    return this.type.toTypeName(classTypeParams)
+    val typeName = this.type.toTypeName(classTypeParams)
+    // Fix: typealias-handling
+    // https://square.github.io/kotlinpoet/interop-ksp/#typealias-handling
+    // Alias class -> such as: var a = arrayList<String>() -> ArrayList<String>
+    typeName.tags[TypeAliasTag::class]?.let {
+        val typeAliasTag = (it as? TypeAliasTag)?.abbreviatedType
+        if (typeAliasTag != null) {
+            return typeAliasTag
+        }
+    }
+    return typeName
 }
 
 /**
