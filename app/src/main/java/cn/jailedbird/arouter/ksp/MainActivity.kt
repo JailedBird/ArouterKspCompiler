@@ -8,11 +8,15 @@ class MainActivity : AppCompatActivity() {
 
     @Autowired
     var list = mutableListOf<String>()
-    @Autowired
-    var arrayList: ArrayList<String> = arrayListOf<String>()
 
     @Autowired
-    var array: LinkedHashMap<String, ArrayList<Int>>? = null
+    var arrayList = arrayListOf<String>()
+
+    @Autowired
+    var array = LinkedHashMap<String, ArrayList<Int>>()
+
+    @Autowired
+    var hasSet = HashSet<LinkedHashMap<String, ArrayList<Int>>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
