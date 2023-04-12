@@ -1,17 +1,18 @@
 package cn.jailedbird.arouter.ksp
 
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 
-class MainActivity : AppCompatActivity() {
-
+@Route(path = "/app/SecondActivtiy")
+class SecondActivtiy : AppCompatActivity() {
     @Autowired
     var list = mutableListOf<String>()
 
-    @Autowired
+    @Autowired(required = true)
     var arrayList = arrayListOf<String>()
 
     @Autowired
@@ -22,13 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        ARouter.getInstance().inject(this)
+        setContentView(R.layout.second_main)
+        Log.d("TAG", arrayList.toString())
+        Log.d("TAG", list.toString())
 
-        findViewById<Button>(R.id.jump).setOnClickListener {
-            ARouter.getInstance().build("/app/SecondActivtiy")
-                .withObject("arrayList", arrayListOf("1", "2", "3"))
-                .withObject("list", mutableListOf("1", "2", "3", "4"))
-                .navigation(this)
-        }
     }
 }
