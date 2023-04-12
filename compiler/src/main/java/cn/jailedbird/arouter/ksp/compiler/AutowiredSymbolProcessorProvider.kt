@@ -1,8 +1,6 @@
 package cn.jailedbird.arouter.ksp.compiler
 
 import cn.jailedbird.arouter.ksp.compiler.utils.*
-import cn.jailedbird.arouter.ksp.compiler.utils.routeType
-import cn.jailedbird.arouter.ksp.compiler.utils.typeExchange
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.enums.RouteType
 import com.alibaba.android.arouter.facade.enums.TypeKind
@@ -68,7 +66,7 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                 val parent = element.parentDeclaration as KSClassDeclaration
 
                 if (element.modifiers.contains(Modifier.PRIVATE)) {
-                    throw  IllegalAccessException(
+                    throw IllegalAccessException(
                         "The inject fields CAN NOT BE 'private'!!! please check field ["
                                 + element.simpleName.asString() + "] in class [" + parent.qualifiedName?.asString() + "]"
                     )
@@ -313,11 +311,17 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                         )
                     }
                     TypeKind.OBJECT -> {
-                        method.beginControlFlow("if(serializationService != null && substitute.${intent} != null)")
+                        method.beginControlFlow("if(serializationService != null)")
                             .addStatement(
-                                "substitute.%L = serializationService!!.parseObject(substitute.${intent}!!.getString(%S), (object : TypeWrapper<%T>(){}).type)",
-                                fieldName, bundleName, parameterClassName
+                                "val res = substitute.${intent}?.getString(%S)",
+                                bundleName
                             )
+                            .beginControlFlow("if(!res.isNullOrEmpty())")
+                            .addStatement(
+                                "serializationService?.parseObject<%T>(res, (object : TypeWrapper<%T>(){}).type)?.let{ substitute.%L = it }",
+                                parameterClassName, parameterClassName, bundleName
+                            )
+                            .endControlFlow()
                             .nextControlFlow("else")
                             // Kotlin-poet Notice: Long lists line wrapping makes code not compile
                             // https://github.com/square/kotlinpoet/issues/1346 , temp using """  """ to wrap long string (perhaps can optimize it)
