@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "ArouterKspCompiler"
 include ':app'
 include ':compiler'
+includeBuild("arouter-gradle-plugin")

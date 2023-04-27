@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 
+@Route(path = "/app/MainActivity")
 class MainActivity : AppCompatActivity() {
 
     @Autowired
