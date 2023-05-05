@@ -117,9 +117,11 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                     JSON_SERVICE_CLASS_NAME
                 )
                 val parentClassName = parent.toClassName()
+                val message =
+                    "The target that needs to be injected must be ${parentClassName.simpleName}, please check your code!"
                 injectMethodBuilder.addStatement(
-                    "val substitute = (target as? %T)?: throw IllegalStateException(\n·\"\"\"The target that needs to be injected must be %T, please check your code!\"\"\"\n·)",
-                    parentClassName, parentClassName
+                    "val substitute = (target as? %T)?: throw IllegalStateException(\n·%S\n·)",
+                    parentClassName, message
                 )
 
                 val parentRouteType = parent.routeType
@@ -196,10 +198,12 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
             }
             // Validator
             if (annotation.required) {
+                val message =
+                    "The field '${fieldName}' is null, in class '${parentClassName.simpleName}' !"
                 injectMethodBuilder.beginControlFlow("if (substitute.$fieldName == null)")
                     .addStatement(
-                        "throw RuntimeException(\"\"\"The field '$fieldName' is null, in class '%L' !\"\"\")",
-                        parentClassName.simpleName
+                        "throw RuntimeException(%S)",
+                        message
                     )
                     .endControlFlow()
             }
@@ -311,6 +315,8 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                         )
                     }
                     TypeKind.OBJECT -> {
+                        val message =
+                            "You want automatic inject the field '${fieldName}' in class '${parentClassName.simpleName}', then you should implement 'SerializationService' to support object auto inject!"
                         method.beginControlFlow("if(serializationService != null)")
                             .addStatement(
                                 "val res = substitute.${intent}?.getString(%S)",
@@ -325,9 +331,9 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                             .nextControlFlow("else")
                             // Kotlin-poet Notice: Long lists line wrapping makes code not compile
                             // https://github.com/square/kotlinpoet/issues/1346 , temp using """  """ to wrap long string (perhaps can optimize it)
+                            // Fix: use val message = "long string" to wrapper long string, and use %S for message, it will not be break
                             .addStatement(
-                                "Log.e(%S , \"\"\"You want automatic inject the field '%L' in class '%L', then you should implement 'SerializationService' to support object auto inject!\"\"\"·)",
-                                Consts.TAG, fieldName, parentClassName.simpleName
+                                "Log.e(%S , %S)", Consts.TAG, message
                             )
                             .endControlFlow()
                     }
