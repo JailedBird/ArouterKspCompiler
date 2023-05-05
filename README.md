@@ -19,7 +19,7 @@ Kotlin Symbol Processing（KSP）是用于处理Kotlin编程语言中的注解�
 
 因KSP插件和Kotlin版本高度相关， 因此双方需要尽量匹配，附上KSP发布地址[KSP releases](https://github.com/google/ksp/releases)；此外[KSP issues](https://github.com/google/ksp/issues)下面存在很多的BUG修复，因此更加推荐使用高版本的KSP、避免KSP框架本身的问题；这里我会打出各种版本的插件，供大家使用，如果需要其他版本的可以提Issue；
 
-本插件的版本发布地址https://jitpack.io/#JailedBird/ArouterKspCompiler， 版本号可做如下参考:
+本插件发布在[Jitpack.io](https://jitpack.io/#JailedBird/ArouterKspCompiler)， 版本号可做如下参考:
 
 | kotlin版本号 | 最新ArouterKspCompiler | 建议KSP插件版本号 |
 | ------------ | ---------------------- | ----------------- |
