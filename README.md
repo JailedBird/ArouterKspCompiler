@@ -1,7 +1,11 @@
 # ArouterKspCompiler
-KSP annotation processor for Arouter
+Arouter KSP annotation processor 
 
-ArouterKspCompiler插件是对ARouter注解处理器（com.alibaba:arouter-compiler）插件的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；为何使用KSP注解处理器以及其优点请参考如下引言：
+ArouterKspCompiler插件是对ARouter官方注解处理器插件（com.alibaba:arouter-compiler）的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；
+
+
+
+Kotlin Symbol Processing（KSP）是用于处理Kotlin编程语言中的注解的注解处理器框架；换言之，KSP框架是面向Kotlin语言的  "Java注解处理器（APT，Annotation Processing Tool）"，并且KSP直接兼容Java的注解处理；KSP注解处理器采用增量处理的方式，只处理需要更新的注解和代码，避免重新处理整个编译过程，从而显著加速了注解处理的速度；此外KSP可以避免类似KAPT中将Kotlin文件转化为Java存根的耗时操作；
 
 >  Kotlin Symbol Processing (*KSP*) is an API that you can use to develop lightweight compiler plugins. KSP provides a simplified compiler plugin API that leverages the power of Kotlin while keeping the learning curve at a minimum. Compared to [kapt](https://kotlinlang.org/docs/kapt.html), annotation processors that use KSP can run up to 2 times faster. 
 
@@ -11,13 +15,11 @@ ArouterKspCompiler插件是对ARouter注解处理器（com.alibaba:arouter-compi
 
 ### kotlin && ksp配置
 
-1、 导入KSP插件，因KSP插件和Kotlin版本高度相关， 因此双方需要匹配；KSP版本号查询地址 [KSP Release](https://github.com/google/ksp/releases)
+1、 导入KSP插件；
 
+因KSP插件和Kotlin版本高度相关， 因此双方需要尽量匹配，附上KSP发布地址[KSP releases](https://github.com/google/ksp/releases)；此外[KSP issues](https://github.com/google/ksp/issues)下面存在很多的BUG修复，因此更加推荐使用高版本的KSP、避免KSP框架本身的问题；这里我会打出各种版本的插件，供大家使用，如果需要其他版本的可以提Issue；
 
-
-**前面提到， KSP版本号需要和kotlin匹配， 理论上KSP版本号越高， BUG越少， 因此我会打出各种kotlin版本的插件， 供大家使用(尽量使用高版本)**
-
-版本发布地址:https://jitpack.io/#JailedBird/ArouterKspCompiler, 版本号可做如下参考:
+本插件的版本发布地址https://jitpack.io/#JailedBird/ArouterKspCompiler， 版本号可做如下参考:
 
 | kotlin版本号 | 最新ArouterKspCompiler | 建议KSP插件版本号 |
 | ------------ | ---------------------- | ----------------- |
@@ -35,10 +37,6 @@ ArouterKspCompiler插件是对ARouter注解处理器（com.alibaba:arouter-compi
 根目录下配置ksp的版本号
 
 ```kotlin
-buildscript {
-    ext.kotlin_version = '1.6.10'
-}
-
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.10' apply false
     id 'com.google.devtools.ksp' version '1.6.10-1.0.4' apply false
@@ -110,7 +108,7 @@ maven { url 'https://jitpack.io' }
 Arouter模块中导入Ksp插件：
 
 ```kotlin
-ksp 'com.github.JailedBird:ArouterKspCompiler:1.6.10-1.0.0'
+ksp 'com.github.JailedBird:ArouterKspCompiler:1.6.10-1.0.2'
 ```
 
 此时编译项目，可以在模块build文件找到对应生成的文件， 对此大家可以通过 生成文件源码、Json路由表文件（需开启Doc配置生成）等对比去检验插件功能是否正常；
@@ -137,6 +135,8 @@ ksp.incremental.intermodule=true
 
 
 ### 注意事项
+
+0、 常见问题请转到本仓库的Issue中查看（已置顶）
 
 1、 纯Java模块直接使用annotationProcessor导入Arouter原生注解处理器即可， 不要改为ksp导入，避免潜在的bug
 
