@@ -5,12 +5,23 @@ import java.io.File
 /**
  * register setting
  */
-class ScanSetting {
+class ScanSetting(_interfaceName: String) {
     val interfaceName: String
 
-    constructor(_interfaceName: String) {
+    init {
         interfaceName = INTERFACE_PACKAGE_NAME + _interfaceName
     }
+
+    /**
+     * scan result for {@link #interfaceName}
+     * class names in this list
+     */
+    val classList = mutableListOf<String?>()
+
+    /**
+     * jar file which contains class: {@link #GENERATE_TO_CLASS_NAME}
+     */
+    var fileContainsInitClass: File? = null
 
     companion object {
         const val PLUGIN_NAME = "com.alibaba.arouter"
@@ -46,14 +57,4 @@ class ScanSetting {
         const val REGISTER_METHOD_NAME = "register"
     }
 
-    /**
-     * jar file which contains class: {@link #GENERATE_TO_CLASS_NAME}
-     */
-    var fileContainsInitClass: File? = null
-
-    /**
-     * scan result for {@link #interfaceName}
-     * class names in this list
-     */
-    val classList = mutableListOf<String?>()
 }

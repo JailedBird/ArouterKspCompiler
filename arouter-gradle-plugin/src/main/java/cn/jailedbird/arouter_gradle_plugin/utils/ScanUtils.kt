@@ -58,7 +58,7 @@ object ScanUtil {
         scanClass(FileInputStream(file))
     }
 
-    fun scanClass(inputStream: InputStream) {
+    private fun scanClass(inputStream: InputStream) {
         val cr = ClassReader(inputStream)
         val cw = ClassWriter(cr, 0)
         val cv = ScanClassVisitor(Opcodes.ASM5, cw)
@@ -79,7 +79,6 @@ object ScanUtil {
             RegisterTransform.registerList.forEach { ext ->
                 interfaces?.forEach { itName ->
                     if (itName == ext.interfaceName) {
-                        println("fuck")
                         // fix repeated inject init code when Multi-channel packaging
                         if (!ext.classList.contains(name)) {
                             ext.classList.add(name)
