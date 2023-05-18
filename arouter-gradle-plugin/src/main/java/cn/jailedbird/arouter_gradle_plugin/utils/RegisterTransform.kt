@@ -8,5 +8,15 @@ object RegisterTransform {
         ScanSetting("IInterceptorGroup"),
         ScanSetting("IProviderGroup"),
     )
+
+    fun print() {
+        registerList.forEach { item ->
+            println("Item ${item.interfaceName}")
+            item.classList.forEach {
+                println("\t${it}")
+            }
+        }
+    }
+
     var fileContainsInitClass: File? = null
 }
