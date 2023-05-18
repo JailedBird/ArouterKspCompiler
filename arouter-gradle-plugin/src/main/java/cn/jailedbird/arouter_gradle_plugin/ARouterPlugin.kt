@@ -26,10 +26,11 @@ class ARouterPlugin : Plugin<Project> {
 
                 variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                     .use(taskProvider)
-                    .toGet(
+                    .toTransform(
                         ScopedArtifact.CLASSES,
                         GetAllClassesTask::allJars,
-                        GetAllClassesTask::allDirectories
+                        GetAllClassesTask::allDirectories,
+                        GetAllClassesTask::output
                     )
 
             }

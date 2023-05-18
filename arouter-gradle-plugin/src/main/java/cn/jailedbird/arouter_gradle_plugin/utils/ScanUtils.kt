@@ -35,7 +35,7 @@ object ScanUtil {
                 } else if (ScanSetting.GENERATE_TO_CLASS_FILE_NAME == entryName) {
                     // mark this jar file contains LogisticsCenter.class
                     // After the scan is complete, we will generate register code into this file
-                    // RegisterTransform.fileContainsInitClass = destFile
+                    RegisterTransform.injectJarName = jarFile.absolutePath
                 }
             }
             file.close()
