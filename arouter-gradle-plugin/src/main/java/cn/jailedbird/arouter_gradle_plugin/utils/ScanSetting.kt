@@ -16,7 +16,7 @@ class ScanSetting(_interfaceName: String) {
      * scan result for {@link #interfaceName}
      * class names in this list
      */
-    val classList = mutableListOf<String?>()
+    val classList = mutableListOf<String>()
 
     /**
      * jar file which contains class: {@link #GENERATE_TO_CLASS_NAME}

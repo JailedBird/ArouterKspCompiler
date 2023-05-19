@@ -17,6 +17,13 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
+/**
+ * TODO LIST
+ * 1. closeEntry perhaps cause performance problem, Please use ZipEntry to optmize
+ * 2. Perhaps we can only scan & copy(or code inject) in one turn, avoid twice scan jar
+ * 3. Optimize file path resolve function, make it graceful
+ * 3. Please test build result, can run safely
+ * */
 abstract class GetAllClassesTask : DefaultTask() {
 
     @get:InputFiles
@@ -122,7 +129,6 @@ abstract class GetAllClassesTask : DefaultTask() {
             directory.asFile.walk().forEach { classFile ->
                 if (classFile.isFile) {
                     val absPath = classFile.path.replace(File.separatorChar, '/')
-
                     val entryName = absPath.substringAfter(rootPath)
                     println("My entry name $entryName")
                     // 创建Jar条目并设置其名称
