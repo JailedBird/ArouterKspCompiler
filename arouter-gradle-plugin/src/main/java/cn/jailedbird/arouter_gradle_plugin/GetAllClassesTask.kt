@@ -3,6 +3,7 @@ package cn.jailedbird.arouter_gradle_plugin
 import cn.jailedbird.arouter_gradle_plugin.utils.RegisterTransform
 import cn.jailedbird.arouter_gradle_plugin.utils.ScanSetting
 import cn.jailedbird.arouter_gradle_plugin.utils.ScanUtil
+import org.apache.commons.io.IOUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -14,6 +15,7 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
+import java.util.jar.JarOutputStream
 
 abstract class GetAllClassesTask : DefaultTask() {
 
@@ -58,12 +60,28 @@ abstract class GetAllClassesTask : DefaultTask() {
                 ScanUtil.scanJar(file.asFile)
             }
         }
-        // Get jar
+        // 理论上来说，Arouter核心类只能在Jar中出现， 不能出现在目录中 因此 搜索和查找变换均限定在Jar
+        println("Find arouter in jar ${RegisterTransform.injectJarName}")
+        // Get jar [寻找对应的JAR]
         val jar = allJars.get()
             .firstOrNull { it.asFile.absolutePath == RegisterTransform.injectJarName }?.asFile
             ?: error("Can not find inject point, Please import")
 
-        var flag = false
+        JarOutputStream(output.asFile.get().outputStream()).use { jarOutput ->
+            /*allJars.get().forEach { jarRegularFile ->
+                val jarFile = jarRegularFile.asFile
+                if (jarFile.absolutePath == RegisterTransform.injectJarName) {
+                    // [对Transform进行变换] 改变其中 ScanSetting.GENERATE_TO_CLASS_FILE_NAME 对应字节码
+
+                } else {
+                    // 直接对Jar进行原地复制 进入output中 (jar 转化为其中的一部分)
+                }
+            }*/
+            copyClassFilesToJarOutputStream(allDirectories, jarOutput)
+            // copyJarsToJarOutputStream(allJars.get().map { it.asFile }, jarOutput)
+        }
+
+        /*var flag = false
         if (jar.exists()) {
             val file = JarFile(jar)
             val enumeration = file.entries()
@@ -76,10 +94,91 @@ abstract class GetAllClassesTask : DefaultTask() {
                 }
             }
             file.close()
-        }
+        }*/
 
-        if (!flag) {
+        /*if (!flag) {
             error("Can not find inject class")
+        }*/
+    }
+
+
+    /*将Class文件集合输出到JarOutputStream中，注意他一般只是作为整个流操作的一部分
+    * 因此不存在关闭等相关环节，此外这里也没进行异常处理 注意Entry的格式为: com/android/xxx 之类的 相对路径*/
+    @Throws(Exception::class)
+    fun copyClassFilesToJarOutputStream(
+        dirs: ListProperty<Directory>,
+        outputStream: JarOutputStream
+    ) {
+        /*
+        * C:\yeahka\ArouterKspCompiler\app\build\tmp\kotlin-classes\debug
+            Class entry name C:/yeahka/ArouterKspCompiler/app/build/tmp/kotlin-classes/debug/cn/jailedbird/arouter/ksp/App.class
+            Class entry name C:/yeahka/ArouterKspCompiler/app/build/tmp/kotlin-classes/debug/cn/jailedbird/arouter/ksp/JsonServiceImpl.class
+        * We need: cn/jailedbird/arouter/ksp/JsonServiceImpl.class
+        * */
+        dirs.get().forEach { directory ->
+            val rootPath =
+                directory.asFile.absolutePath.replace(File.separatorChar, '/') + '/'
+            println("Directory is $rootPath")
+            directory.asFile.walk().forEach { classFile ->
+                if (classFile.isFile) {
+                    val absPath = classFile.path.replace(File.separatorChar, '/')
+
+                    val entryName = absPath.substringAfter(rootPath)
+                    println("My entry name $entryName")
+                    // 创建Jar条目并设置其名称
+                    val entry = JarEntry(entryName)
+                    // 将条目添加到目标Jar文件中
+                    outputStream.putNextEntry(entry)
+                    // 复制Class文件内容到目标Jar文件中
+                    classFile.inputStream().use { input ->
+                        input.copyTo(outputStream)
+                    }
+                    // 关闭当前条目
+                    outputStream.closeEntry()
+                }
+            }
+        }
+    }
+
+    /*文件处理细节
+     *Jar file is C:\yeahka\ArouterKspCompiler\app\build\intermediates\compile_and_runtime_not_namespaced_r_class_jar\debug\R.jar
+        Jar entry is com/alibaba/android/arouter/R$attr.class
+        Jar entry is com/alibaba/android/arouter/R$color.class
+        Jar entry is com/alibaba/android/arouter/R$dimen.class
+        Jar entry is com/alibaba/android/arouter/R$drawable.class
+     * */
+    @Throws(Exception::class)
+    fun copyJarsToJarOutputStream(jars: List<File>, outputStream: JarOutputStream) {
+        for (jarFile in jars) {
+            println("Jar file is $jarFile")
+            // 打开源Jar文件
+            val sourceJar = JarFile(jarFile)
+            // 遍历源Jar文件的条目
+            val entries = sourceJar.entries()
+            while (entries.hasMoreElements()) {
+                try {
+                    val entry = entries.nextElement()
+                    if (entry.isDirectory) { // Exclude directory
+                        continue
+                    }
+                    println("\tJar entry is ${entry.name}")
+                    // 创建目标Jar文件的条目
+                    val destinationEntry = JarEntry(entry.name)
+                    // 将条目添加到目标Jar文件中
+                    outputStream.putNextEntry(destinationEntry)
+                    // 复制源Jar文件中的内容到目标Jar文件中
+                    val inputStream = sourceJar.getInputStream(entry)
+                    IOUtils.copy(inputStream, outputStream)
+                    inputStream.close()
+                    // 关闭当前条目
+                    outputStream.closeEntry()
+                } catch (e: Exception) {
+                    println(e)
+                }
+
+            }
+            // 关闭源Jar文件
+            sourceJar.close()
         }
     }
 
