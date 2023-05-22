@@ -24,14 +24,14 @@ class ARouterPlugin : Plugin<Project> {
                         GetAllClassesTask::class.java
                     )
 
-                /*variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
+                variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                     .use(taskProvider)
                     .toTransform(
                         ScopedArtifact.CLASSES,
                         GetAllClassesTask::allJars,
                         GetAllClassesTask::allDirectories,
                         GetAllClassesTask::output
-                    )*/
+                    )
 
             }
         }

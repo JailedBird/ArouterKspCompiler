@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -70,9 +71,9 @@ abstract class GetAllClassesTask : DefaultTask() {
         // 理论上来说，Arouter核心类只能在Jar中出现， 不能出现在目录中 因此 搜索和查找变换均限定在Jar
         println("Find arouter in jar ${RegisterTransform.injectJarName}")
         // Get jar [寻找对应的JAR]
-        val jar = allJars.get()
+        /*val jar = allJars.get()
             .firstOrNull { it.asFile.absolutePath == RegisterTransform.injectJarName }?.asFile
-            ?: error("Can not find inject point, Please import")
+            ?: error("Can not find inject point, Please import")*/
 
         JarOutputStream(output.asFile.get().outputStream()).use { jarOutput ->
             /*allJars.get().forEach { jarRegularFile ->
@@ -85,7 +86,7 @@ abstract class GetAllClassesTask : DefaultTask() {
                 }
             }*/
             copyClassFilesToJarOutputStream(allDirectories, jarOutput)
-            // copyJarsToJarOutputStream(allJars.get().map { it.asFile }, jarOutput)
+            copyJarsToJarOutputStream(allJars.get().map { it.asFile }, jarOutput)
         }
 
         /*var flag = false
@@ -162,24 +163,40 @@ abstract class GetAllClassesTask : DefaultTask() {
             // 遍历源Jar文件的条目
             val entries = sourceJar.entries()
             while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
                 try {
-                    val entry = entries.nextElement()
                     if (entry.isDirectory) { // Exclude directory
                         continue
                     }
                     println("\tJar entry is ${entry.name}")
-                    // 创建目标Jar文件的条目
-                    val destinationEntry = JarEntry(entry.name)
-                    // 将条目添加到目标Jar文件中
-                    outputStream.putNextEntry(destinationEntry)
-                    // 复制源Jar文件中的内容到目标Jar文件中
-                    val inputStream = sourceJar.getInputStream(entry)
-                    IOUtils.copy(inputStream, outputStream)
-                    inputStream.close()
-                    // 关闭当前条目
-                    outputStream.closeEntry()
+                    if (entry.name != ScanSetting.GENERATE_TO_CLASS_FILE_NAME) {
+                        // 创建目标Jar文件的条目
+                        val destinationEntry = JarEntry(entry.name)
+                        // 将条目添加到目标Jar文件中
+                        outputStream.putNextEntry(destinationEntry)
+                        // 复制源Jar文件中的内容到目标Jar文件中
+                        val inputStream = sourceJar.getInputStream(entry)
+                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.close()
+                        // 关闭当前条目
+                        outputStream.closeEntry()
+                    } else {
+                        println("Inject byte code")
+                        // 注入代码
+                        val inputStream = sourceJar.getInputStream(entry)
+                        val registerCodeGenerator =
+                            RegisterCodeGenerator(RegisterTransform.registerList)
+                        val resultByteArray = registerCodeGenerator.referHackWhenInit(inputStream)
+                        inputStream.close()
+                        // 创建目标Jar文件的条目
+                        val destinationEntry = JarEntry(entry.name)
+                        // 将条目添加到目标Jar文件中
+                        outputStream.putNextEntry(destinationEntry)
+                        IOUtils.copy(ByteArrayInputStream(resultByteArray), outputStream)
+                        outputStream.closeEntry()
+                    }
                 } catch (e: Exception) {
-                    println(e)
+                    println("Merge jar error entry:${entry.name}, error is $e ")
                 }
 
             }

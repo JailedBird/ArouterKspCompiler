@@ -80,7 +80,7 @@ object ScanUtil {
                 interfaces?.forEach { itName ->
                     if (itName == ext.interfaceName) {
                         // fix repeated inject init code when Multi-channel packaging
-                        if (!ext.classList.contains(name)) {
+                        if (name != null && !ext.classList.contains(name)) {
                             ext.classList.add(name)
                         }
                     }
