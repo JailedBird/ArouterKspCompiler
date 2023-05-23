@@ -52,14 +52,14 @@ object Utils {
      * scan class file
      * @param class file
      */
-    fun scanClass(file: File, targetList: List<ScanSetting>) {
+    fun scanClass(file: File, targetList: List<ScanSetting>, autoClose: Boolean = true) {
         scanClass(FileInputStream(file), targetList)
     }
 
     fun scanClass(
         inputStream: InputStream,
         targetList: List<ScanSetting>,
-        autoClose: Boolean = false
+        autoClose: Boolean = true
     ) {
         val cr = ClassReader(inputStream)
         val cw = ClassWriter(cr, 0)

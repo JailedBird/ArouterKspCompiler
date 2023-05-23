@@ -9,60 +9,6 @@ import java.io.InputStream
  */
 class RegisterCodeGenerator(private val extensions: List<ScanSetting>) {
 
-    companion object {
-        /*fun insertInitCodeTo(registerSetting: ScanSetting) {
-            if (registerSetting != null && registerSetting.classList.isNotEmpty()) {
-                val processor = RegisterCodeGenerator(registerSetting)
-                val file = RegisterTransform.fileContainsInitClass
-                if (file.name.endsWith(".jar")) {
-                    processor.insertInitCodeIntoJarFile(file)
-                }
-            }
-        }*/
-    }
-
-    /**
-     * generate code into jar file
-     * @param jarFile the jar file which contains LogisticsCenter.class
-     * @return the modified jar file
-     */
-    /*private fun insertInitCodeIntoJarFile(jarFile: File): File {
-        if (jarFile.exists()) {
-            val optJar = File(jarFile.parent, jarFile.name + ".opt")
-            if (optJar.exists()) {
-                optJar.delete()
-            }
-            val file = JarFile(jarFile)
-            val enumeration = file.entries()
-            val jarOutputStream = JarOutputStream(FileOutputStream(optJar))
-
-            while (enumeration.hasMoreElements()) {
-                val jarEntry = enumeration.nextElement() as JarEntry
-                val entryName = jarEntry.name
-                val zipEntry = ZipEntry(entryName)
-                val inputStream = file.getInputStream(jarEntry)
-                jarOutputStream.putNextEntry(zipEntry)
-                if (ScanSetting.GENERATE_TO_CLASS_FILE_NAME == entryName) {
-                    Logger.i("Insert init code to class >> $entryName")
-                    val bytes = referHackWhenInit(inputStream)
-                    jarOutputStream.write(bytes)
-                } else {
-                    jarOutputStream.write(IOUtils.toByteArray(inputStream))
-                }
-                inputStream.close()
-                jarOutputStream.closeEntry()
-            }
-            jarOutputStream.close()
-            file.close()
-
-            if (jarFile.exists()) {
-                jarFile.delete()
-            }
-            optJar.renameTo(jarFile)
-        }
-        return jarFile
-    }*/
-
     // refer hack class when object init
     fun referHackWhenInit(inputStream: InputStream): ByteArray {
         val cr = ClassReader(inputStream)
