@@ -2,7 +2,7 @@ package cn.jailedbird.arouter_gradle_plugin
 
 import cn.jailedbird.arouter_gradle_plugin.utils.RegisterTransform
 import cn.jailedbird.arouter_gradle_plugin.utils.ScanSetting
-import cn.jailedbird.arouter_gradle_plugin.utils.Utils
+import cn.jailedbird.arouter_gradle_plugin.utils.ScanUtil
 import org.apache.commons.io.IOUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
@@ -25,7 +25,7 @@ import java.util.jar.JarOutputStream
  * 3. Optimize file path resolve function, make it graceful
  * 3. Please test build result, can run safely
  * */
-abstract class GetAllClassesTask : DefaultTask() {
+abstract class GetAllClassesTaskV0 : DefaultTask() {
 
     @get:InputFiles
     abstract val allDirectories: ListProperty<Directory>
@@ -39,12 +39,7 @@ abstract class GetAllClassesTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         val leftSlash = File.separator == "/"
-        val targetList: List<ScanSetting> = listOf(
-            ScanSetting("IRouteRoot"),
-            ScanSetting("IInterceptorGroup"),
-            ScanSetting("IProviderGroup"),
-        )
-        /*allDirectories.get().forEach { directory ->
+        allDirectories.get().forEach { directory ->
             println("Directory : ${directory.asFile.absolutePath}")
             val root = directory.asFile.absolutePath
             directory.asFile.walk().filter(File::isFile).forEach { file ->
@@ -56,116 +51,31 @@ abstract class GetAllClassesTask : DefaultTask() {
                     ScanUtil.scanClass(file)
                 }
             }
-        }*/
+        }
 
-        /*allJars.get().forEach { file ->
+        allJars.get().forEach { file ->
             println("JarFile : ${file.asFile.absolutePath}")
             if (ScanUtil.shouldProcessPreDexJar(file.asFile.absolutePath)) {
                 ScanUtil.scanJar(file.asFile)
             }
-        }*/
+        }
 
-        /*debugCollection(RegisterTransform.registerList)*/
+        debugCollection(RegisterTransform.registerList)
         // 先对所有Class进行扫描，扫描完毕再寻找遍历Jar寻找对应的注入点[暂时不要去考虑优化问题]
-        // allJars.get().forEach { file ->
-        //     println("JarFile : ${file.asFile.absolutePath}")
-        //     if (ScanUtil.shouldProcessPreDexJar(file.asFile.absolutePath)) {
-        //         ScanUtil.scanJar(file.asFile)
-        //     }
-        // }
+        allJars.get().forEach { file ->
+            println("JarFile : ${file.asFile.absolutePath}")
+            if (ScanUtil.shouldProcessPreDexJar(file.asFile.absolutePath)) {
+                ScanUtil.scanJar(file.asFile)
+            }
+        }
         // 理论上来说，Arouter核心类只能在Jar中出现， 不能出现在目录中 因此 搜索和查找变换均限定在Jar
-        // println("Find arouter in jar ${RegisterTransform.injectJarName}")
+        println("Find arouter in jar ${RegisterTransform.injectJarName}")
         // Get jar [寻找对应的JAR]
         /*val jar = allJars.get()
             .firstOrNull { it.asFile.absolutePath == RegisterTransform.injectJarName }?.asFile
             ?: error("Can not find inject point, Please import")*/
 
         JarOutputStream(output.asFile.get().outputStream()).use { jarOutput ->
-            // Scan directoy (Copy and Collection)
-            allDirectories.get().forEach { directory ->
-                val directoryPath =
-                    if (directory.asFile.absolutePath.endsWith(File.separatorChar)) {
-                        directory.asFile.absolutePath
-                    } else {
-                        directory.asFile.absolutePath + File.separatorChar
-                    }
-                println("Directory is $directoryPath")
-                directory.asFile.walk().forEach { file ->
-                    if (file.isFile) {
-                        val entryName = if (leftSlash) {
-                            file.path.substringAfter(directoryPath)
-                        } else {
-                            file.path.substringAfter(directoryPath).replace(File.separatorChar, '/')
-                        }
-                        println("\tDirectory entry name $entryName")
-                        if (entryName.isNotEmpty()) {
-                            // Copy
-                            val entry = JarEntry(entryName)
-                            jarOutput.putNextEntry(entry)
-                            file.inputStream().use { input ->
-                                // Use stream to detect register
-                                if (Utils.shouldProcessClass(entryName)) {
-                                    Utils.scanClass(input, targetList)
-                                }
-                                input.copyTo(jarOutput)
-                            }
-                            jarOutput.closeEntry()
-                        }
-                    }
-                }
-            }
-
-            debugCollection(targetList)
-            // Scan Jar, Copy & Scan & Code Inject
-            val jars = allJars.get().map { it.asFile }
-            for (jar in jars) {
-                println("Jar file is $jar")
-                val sourceJar = JarFile(jar)
-                val entries = sourceJar.entries()
-                while (entries.hasMoreElements()) {
-                    val entry = entries.nextElement()
-                    try {
-                        if (entry.isDirectory) { // Exclude directory
-                            continue
-                        }
-                        println("\tJar entry is ${entry.name}")
-                        if (entry.name != ScanSetting.GENERATE_TO_CLASS_FILE_NAME) {
-                            // 创建目标Jar文件的条目
-                            val destinationEntry = JarEntry(entry.name)
-                            // 将条目添加到目标Jar文件中
-                            jarOutput.putNextEntry(destinationEntry)
-                            // 复制源Jar文件中的内容到目标Jar文件中
-                            val inputStream = sourceJar.getInputStream(entry)
-                            IOUtils.copy(inputStream, jarOutput)
-                            inputStream.close()
-                            // 关闭当前条目
-                            jarOutput.closeEntry()
-                        } else {
-                            println("Inject byte code")
-                            // 注入代码
-                            val inputStream = sourceJar.getInputStream(entry)
-                            val registerCodeGenerator =
-                                RegisterCodeGenerator(RegisterTransform.registerList)
-                            val resultByteArray =
-                                registerCodeGenerator.referHackWhenInit(inputStream)
-                            inputStream.close()
-                            // 创建目标Jar文件的条目
-                            val destinationEntry = JarEntry(entry.name)
-                            // 将条目添加到目标Jar文件中
-                            jarOutput.putNextEntry(destinationEntry)
-                            IOUtils.copy(ByteArrayInputStream(resultByteArray), jarOutput)
-                            jarOutput.closeEntry()
-                        }
-                    } catch (e: Exception) {
-                        println("Merge jar error entry:${entry.name}, error is $e ")
-                    }
-
-                }
-                // 关闭源Jar文件
-                sourceJar.close()
-            }
-
-
             /*allJars.get().forEach { jarRegularFile ->
                 val jarFile = jarRegularFile.asFile
                 if (jarFile.absolutePath == RegisterTransform.injectJarName) {
@@ -175,8 +85,8 @@ abstract class GetAllClassesTask : DefaultTask() {
                     // 直接对Jar进行原地复制 进入output中 (jar 转化为其中的一部分)
                 }
             }*/
-            // copyClassFilesToJarOutputStream(allDirectories, jarOutput)
-            // copyJarsToJarOutputStream(allJars.get().map { it.asFile }, jarOutput)
+            copyClassFilesToJarOutputStream(allDirectories, jarOutput)
+            copyJarsToJarOutputStream(allJars.get().map { it.asFile }, jarOutput)
         }
 
         /*var flag = false
@@ -204,7 +114,8 @@ abstract class GetAllClassesTask : DefaultTask() {
     * 因此不存在关闭等相关环节，此外这里也没进行异常处理 注意Entry的格式为: com/android/xxx 之类的 相对路径*/
     @Throws(Exception::class)
     fun copyClassFilesToJarOutputStream(
-        dirs: ListProperty<Directory>, outputStream: JarOutputStream
+        dirs: ListProperty<Directory>,
+        outputStream: JarOutputStream
     ) {
         /*
         * C:\yeahka\ArouterKspCompiler\app\build\tmp\kotlin-classes\debug
@@ -213,7 +124,8 @@ abstract class GetAllClassesTask : DefaultTask() {
         * We need: cn/jailedbird/arouter/ksp/JsonServiceImpl.class
         * */
         dirs.get().forEach { directory ->
-            val rootPath = directory.asFile.absolutePath.replace(File.separatorChar, '/') + '/'
+            val rootPath =
+                directory.asFile.absolutePath.replace(File.separatorChar, '/') + '/'
             println("Directory is $rootPath")
             directory.asFile.walk().forEach { classFile ->
                 if (classFile.isFile) {
@@ -243,7 +155,7 @@ abstract class GetAllClassesTask : DefaultTask() {
         Jar entry is com/alibaba/android/arouter/R$drawable.class
      * */
     @Throws(Exception::class)
-    fun copyJarsToJarOutputStream(jars: List<File>, jarOutput: JarOutputStream) {
+    fun copyJarsToJarOutputStream(jars: List<File>, outputStream: JarOutputStream) {
         for (jarFile in jars) {
             println("Jar file is $jarFile")
             // 打开源Jar文件
@@ -261,13 +173,13 @@ abstract class GetAllClassesTask : DefaultTask() {
                         // 创建目标Jar文件的条目
                         val destinationEntry = JarEntry(entry.name)
                         // 将条目添加到目标Jar文件中
-                        jarOutput.putNextEntry(destinationEntry)
+                        outputStream.putNextEntry(destinationEntry)
                         // 复制源Jar文件中的内容到目标Jar文件中
                         val inputStream = sourceJar.getInputStream(entry)
-                        IOUtils.copy(inputStream, jarOutput)
+                        IOUtils.copy(inputStream, outputStream)
                         inputStream.close()
                         // 关闭当前条目
-                        jarOutput.closeEntry()
+                        outputStream.closeEntry()
                     } else {
                         println("Inject byte code")
                         // 注入代码
@@ -279,9 +191,9 @@ abstract class GetAllClassesTask : DefaultTask() {
                         // 创建目标Jar文件的条目
                         val destinationEntry = JarEntry(entry.name)
                         // 将条目添加到目标Jar文件中
-                        jarOutput.putNextEntry(destinationEntry)
-                        IOUtils.copy(ByteArrayInputStream(resultByteArray), jarOutput)
-                        jarOutput.closeEntry()
+                        outputStream.putNextEntry(destinationEntry)
+                        IOUtils.copy(ByteArrayInputStream(resultByteArray), outputStream)
+                        outputStream.closeEntry()
                     }
                 } catch (e: Exception) {
                     println("Merge jar error entry:${entry.name}, error is $e ")
