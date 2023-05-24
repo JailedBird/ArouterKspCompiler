@@ -1,24 +1,26 @@
-package cn.jailedbird.arouter_gradle_plugin
+package cn.jailedbird.arouter_gradle_plugin.utils
 
-import cn.jailedbird.arouter_gradle_plugin.utils.ScanSetting
 import org.objectweb.asm.*
 import java.io.InputStream
 
 /**
  * generate register code into LogisticsCenter.class
  */
-class RegisterCodeGenerator(private val extensions: List<ScanSetting>) {
-
+object InjectUtils {
     // refer hack class when object init
-    fun referHackWhenInit(inputStream: InputStream): ByteArray {
+    fun referHackWhenInit(inputStream: InputStream, targetList: List<ScanSetting>): ByteArray {
         val cr = ClassReader(inputStream)
         val cw = ClassWriter(cr, 0)
-        val cv = MyClassVisitor(Opcodes.ASM5, cw)
+        val cv = InjectClassVisitor(Opcodes.ASM5, cw, targetList)
         cr.accept(cv, ClassReader.EXPAND_FRAMES)
         return cw.toByteArray()
     }
 
-    private inner class MyClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
+    private class InjectClassVisitor(
+        api: Int,
+        cv: ClassVisitor,
+        val targetList: List<ScanSetting>? = null
+    ) : ClassVisitor(api, cv) {
 
         override fun visit(
             version: Int,
@@ -41,18 +43,22 @@ class RegisterCodeGenerator(private val extensions: List<ScanSetting>) {
             var mv = super.visitMethod(access, name, desc, signature, exceptions)
             // generate code into this method
             if (name == ScanSetting.GENERATE_TO_METHOD_NAME) {
-                mv = RouteMethodVisitor(Opcodes.ASM5, mv)
+                mv = RouteMethodVisitor(Opcodes.ASM5, mv, targetList)
             }
             return mv
         }
     }
 
-    private inner class RouteMethodVisitor(api: Int, mv: MethodVisitor) : MethodVisitor(api, mv) {
+    private class RouteMethodVisitor(
+        api: Int,
+        mv: MethodVisitor,
+        val targetList: List<ScanSetting>? = null
+    ) : MethodVisitor(api, mv) {
 
         override fun visitInsn(opcode: Int) {
             // generate code before return
             if (opcode in Opcodes.IRETURN..Opcodes.RETURN) {
-                extensions.forEach { scanSetting ->
+                targetList?.forEach { scanSetting ->
                     scanSetting.classList.forEach { name ->
                         val className = name.replace("/", ".")
                         mv.visitLdcInsn(className)// 类名

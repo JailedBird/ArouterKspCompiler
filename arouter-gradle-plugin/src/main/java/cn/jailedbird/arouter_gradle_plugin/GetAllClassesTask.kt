@@ -1,7 +1,8 @@
 package cn.jailedbird.arouter_gradle_plugin
 
+import cn.jailedbird.arouter_gradle_plugin.utils.InjectUtils
 import cn.jailedbird.arouter_gradle_plugin.utils.ScanSetting
-import cn.jailedbird.arouter_gradle_plugin.utils.Utils
+import cn.jailedbird.arouter_gradle_plugin.utils.ScanUtils
 import org.apache.commons.io.IOUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
@@ -63,9 +64,9 @@ abstract class GetAllClassesTask : DefaultTask() {
                         if (entryName.isNotEmpty()) {
                             // Use stream to detect register, Take care, stream can only be read once,
                             // So, When Scan and Copy should open different stream;
-                            if (Utils.shouldProcessClass(entryName)) {
+                            if (ScanUtils.shouldProcessClass(entryName)) {
                                 file.inputStream().use { input ->
-                                    Utils.scanClass(input, targetList, false)
+                                    ScanUtils.scanClass(input, targetList, false)
                                 }
                             }
                             // Copy
@@ -98,9 +99,9 @@ abstract class GetAllClassesTask : DefaultTask() {
                         println("\tJar entry is ${entry.name}")
                         if (entry.name != ScanSetting.GENERATE_TO_CLASS_FILE_NAME) {
                             // Scan and choose
-                            if (Utils.shouldProcessClass(entry.name)) {
+                            if (ScanUtils.shouldProcessClass(entry.name)) {
                                 jar.getInputStream(entry).use { inputs ->
-                                    Utils.scanClass(inputs, targetList, false)
+                                    ScanUtils.scanClass(inputs, targetList, false)
                                 }
                             }
                             // Copy
@@ -126,13 +127,12 @@ abstract class GetAllClassesTask : DefaultTask() {
             debugCollection(targetList)
             // Skip
             println("Start inject byte code")
-            val registerCodeGenerator = RegisterCodeGenerator(targetList)
-            if (originInject == null) {
-                error("Can not find arouter inject point")
+            if (originInject == null) { // Check
+                error("Can not find arouter inject point, Do you import arouter?")
             }
-            // TODO make it to static object
-            val resultByteArray =
-                registerCodeGenerator.referHackWhenInit(ByteArrayInputStream(originInject))
+            val resultByteArray = InjectUtils.referHackWhenInit(
+                ByteArrayInputStream(originInject), targetList
+            )
             jarOutput.putNextEntry(JarEntry(ScanSetting.GENERATE_TO_CLASS_FILE_NAME))
             IOUtils.copy(ByteArrayInputStream(resultByteArray), jarOutput)
             jarOutput.closeEntry()

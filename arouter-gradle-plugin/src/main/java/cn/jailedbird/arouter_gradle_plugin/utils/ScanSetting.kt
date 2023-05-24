@@ -1,7 +1,5 @@
 package cn.jailedbird.arouter_gradle_plugin.utils
 
-import java.io.File
-
 /**
  * register setting
  */
@@ -18,13 +16,8 @@ class ScanSetting(_interfaceName: String) {
      */
     val classList = mutableListOf<String>()
 
-    /**
-     * jar file which contains class: {@link #GENERATE_TO_CLASS_NAME}
-     */
-    var fileContainsInitClass: File? = null
-
     companion object {
-        const val PLUGIN_NAME = "com.alibaba.arouter"
+        const val PLUGIN_NAME = "cn.jailedbird.artour.plugin"
 
         /**
          * The register code is generated into this class

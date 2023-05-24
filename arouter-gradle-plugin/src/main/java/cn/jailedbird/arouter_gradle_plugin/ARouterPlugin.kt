@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package cn.jailedbird.arouter_gradle_plugin
 
 import com.android.build.api.artifact.ScopedArtifact
@@ -9,6 +7,7 @@ import com.android.build.gradle.internal.plugins.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+@Suppress("unused")
 class ARouterPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         // Only app module will use this plugin
@@ -23,7 +22,7 @@ class ARouterPlugin : Plugin<Project> {
                         "${variant.name}ScanAllArouterClassTask",
                         GetAllClassesTask::class.java
                     )
-
+                // Offical Documents: https://github.com/android/gradle-recipes
                 variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                     .use(taskProvider)
                     .toTransform(
