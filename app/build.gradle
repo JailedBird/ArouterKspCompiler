@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
-    id 'com.zj.transform.action'
+    id 'cn.jailedbird.artour.plugin'
 }
 
 // or--> apply plugin: 'kotlin-android'

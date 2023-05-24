@@ -20,9 +20,7 @@ import java.util.jar.JarOutputStream
 /**
  * TODO LIST
  * 1. closeEntry perhaps cause performance problem, Please use ZipEntry to optmize
- * 2. Perhaps we can only scan & copy(or code inject) in one turn, avoid twice scan jar
- * 3. Optimize file path resolve function, make it graceful
- * 3. Please test build result, can run safely
+ * 2. Please test build result, can run safely
  * */
 abstract class GetAllClassesTask : DefaultTask() {
 
@@ -63,14 +61,17 @@ abstract class GetAllClassesTask : DefaultTask() {
                         }
                         println("\tDirectory entry name $entryName")
                         if (entryName.isNotEmpty()) {
+                            // Use stream to detect register, Take care, stream can only be read once,
+                            // So, When Scan and Copy should open different stream;
+                            if (Utils.shouldProcessClass(entryName)) {
+                                file.inputStream().use { input ->
+                                    Utils.scanClass(input, targetList, false)
+                                }
+                            }
                             // Copy
                             val entry = JarEntry(entryName)
                             jarOutput.putNextEntry(entry)
                             file.inputStream().use { input ->
-                                // Use stream to detect register
-                                if (Utils.shouldProcessClass(entryName)) {
-                                    Utils.scanClass(input, targetList, false)
-                                }
                                 input.copyTo(jarOutput)
                             }
                             jarOutput.closeEntry()
@@ -96,24 +97,21 @@ abstract class GetAllClassesTask : DefaultTask() {
                         }
                         println("\tJar entry is ${entry.name}")
                         if (entry.name != ScanSetting.GENERATE_TO_CLASS_FILE_NAME) {
-                            jarOutput.putNextEntry(JarEntry(entry.name))
-                            jar.getInputStream(entry).use { inputs ->
-                                // Scan and choose
-                                if (Utils.shouldProcessClass(entry.name)) {
+                            // Scan and choose
+                            if (Utils.shouldProcessClass(entry.name)) {
+                                jar.getInputStream(entry).use { inputs ->
                                     Utils.scanClass(inputs, targetList, false)
                                 }
+                            }
+                            // Copy
+                            jarOutput.putNextEntry(JarEntry(entry.name))
+                            jar.getInputStream(entry).use { inputs ->
                                 IOUtils.copy(inputs, jarOutput)
                             }
                             jarOutput.closeEntry()
                         } else {
                             // Skip
                             println("Find inject byte code, Skip ${entry.name}")
-                            // jarOutput.putNextEntry(JarEntry(entry.name))
-                            // jar.getInputStream(entry).use { inputs ->
-                            //     originInject = inputs.readAllBytes()
-                            //     IOUtils.copy(inputs, jarOutput)
-                            // }
-                            // jarOutput.closeEntry()
                             jar.getInputStream(entry).use { inputs ->
                                 originInject = inputs.readAllBytes()
                                 println("Find befor originInject is ${originInject?.size}")
@@ -122,7 +120,6 @@ abstract class GetAllClassesTask : DefaultTask() {
                     } catch (e: Exception) {
                         println("Merge jar error entry:${entry.name}, error is $e ")
                     }
-
                 }
                 jar.close()
             }
@@ -133,9 +130,9 @@ abstract class GetAllClassesTask : DefaultTask() {
             if (originInject == null) {
                 error("Can not find arouter inject point")
             }
+            // TODO make it to static object
             val resultByteArray =
                 registerCodeGenerator.referHackWhenInit(ByteArrayInputStream(originInject))
-            println("resultByteArray size is ${resultByteArray.size}")
             jarOutput.putNextEntry(JarEntry(ScanSetting.GENERATE_TO_CLASS_FILE_NAME))
             IOUtils.copy(ByteArrayInputStream(resultByteArray), jarOutput)
             jarOutput.closeEntry()

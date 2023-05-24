@@ -6,7 +6,7 @@ plugins {
 gradlePlugin {
     plugins {
         register("TransformActionPlugin") {
-            id = "com.zj.transform.action"
+            id = "cn.jailedbird.artour.plugin"
             implementationClass = "cn.jailedbird.arouter_gradle_plugin.ARouterPlugin"
         }
     }
@@ -22,7 +22,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly(gradleApi())
+    implementation(kotlin("stdlib"))
+    gradleApi()
     compileOnly("com.android.tools.build:gradle:7.4.0")
     compileOnly("commons-io:commons-io:2.8.0")
     compileOnly("commons-codec:commons-codec:1.15")
