@@ -25,6 +25,7 @@ import java.util.jar.JarOutputStream
  * 3. Optimize file path resolve function, make it graceful
  * 3. Please test build result, can run safely
  * */
+@Deprecated(message = "Deprecated, Please use GetAllClassesTask")
 abstract class GetAllClassesTaskV0 : DefaultTask() {
 
     @get:InputFiles
