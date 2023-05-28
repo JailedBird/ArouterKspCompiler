@@ -2,7 +2,10 @@ package cn.jailedbird.arouter.ksp
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import cn.jailedbird.arouter.ksp.service.ITestService1
+import cn.jailedbird.arouter.ksp.service.ITestService2
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.launcher.ARouter
 
@@ -29,6 +32,14 @@ class MainActivity : AppCompatActivity() {
                 .withObject("arrayList", arrayListOf("1", "2", "3"))
                 .withObject("list", mutableListOf("1", "2", "3", "4"))
                 .navigation(this)
+        }
+        
+        val testService1 = ARouter.getInstance()
+            .navigation(ITestService1::class.java)
+        val testService2 = ARouter.getInstance()
+            .navigation(ITestService2::class.java)
+        if (testService1 != null && testService2 != null && testService1 === testService2) {
+            Toast.makeText(this, "success", Toast.LENGTH_SHORT).show()
         }
     }
 }
