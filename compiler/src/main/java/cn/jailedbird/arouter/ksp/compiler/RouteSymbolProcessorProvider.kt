@@ -145,13 +145,11 @@ class RouteSymbolProcessorProvider : SymbolProcessorProvider {
                                 if (name == Consts.IPROVIDER) {
                                     providersMap[element.qualifiedName!!.asString()] = routeMeta
                                     routeDoc.addPrototype(name)
-                                    break
                                 } else if (declaration.isSubclassOf(Consts.IPROVIDER)) {
                                     // This interface extend the IProvider, so it can be used for mark provider
                                     if (!name.isNullOrEmpty()) {
                                         providersMap[name] = routeMeta
                                         routeDoc.addPrototype(name)
-                                        break
                                     }
                                 }
                             }
