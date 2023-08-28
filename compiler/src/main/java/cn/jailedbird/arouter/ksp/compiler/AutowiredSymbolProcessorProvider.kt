@@ -8,6 +8,8 @@ import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toTypeName
+import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 import com.squareup.kotlinpoet.ksp.writeTo
 
 class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
@@ -117,11 +119,17 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                     JSON_SERVICE_CLASS_NAME
                 )
                 val parentClassName = parent.toClassName()
+                /**
+                 * [com.google.devtools.ksp.symbol.KSClassDeclaration.asStarProjectedType]
+                 * If this is a generic class, return the type where the type argument is applied with star projection at use-site.
+                 * */
+                val parentClassNameGeneric = parent.asStarProjectedType().toTypeName(parent.typeParameters.toTypeParameterResolver())
+
                 val message =
                     "The target that needs to be injected must be ${parentClassName.simpleName}, please check your code!"
                 injectMethodBuilder.addStatement(
                     "val substitute = (target as? %T)?: throw IllegalStateException(\n·%S\n·)",
-                    parentClassName, message
+                    parentClassNameGeneric, message
                 )
 
                 val parentRouteType = parent.routeType
