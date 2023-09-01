@@ -30,7 +30,7 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.69'
 
     // ksp https://github.com/google/ksp/releases/tag/1.8.10-1.0.9
-    implementation 'com.google.devtools.ksp:symbol-processing-api:1.8.10-1.0.9'
+    implementation 'com.google.devtools.ksp:symbol-processing-api:1.8.20-1.0.11'
     // https://square.github.io/kotlinpoet/
     implementation("com.squareup:kotlinpoet:1.12.0")
     implementation("com.squareup:kotlinpoet-ksp:1.12.0")
