@@ -288,12 +288,15 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                         method.addCode(
                             CodeBlock.builder()
                                 .beginControlFlow("substitute.${intent}?.let")
+                                .beginControlFlow("if(it.containsKey(%S))", bundleName)
+                                .addStatement("val str = it.getString(%S)", bundleName)
+                                .beginControlFlow("if(str != null)")
                                 .addStatement(
-                                    "substitute.%L = it.getString(%S, substitute.%L)",
+                                    "substitute.%L = str",
                                     fieldName,
-                                    bundleName,
-                                    fieldName
                                 )
+                                .endControlFlow()
+                                .endControlFlow()
                                 .endControlFlow()
                                 .build()
                         )
@@ -333,9 +336,14 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                                 bundleName
                             )
                             .beginControlFlow("if(!res.isNullOrEmpty())")
+                            // Fix: too long cause <substitute.%L = it> place two lines ==> substitute.%L \n = it, will cause build error
                             .addStatement(
-                                "serializationService?.parseObject<%T>(res, (object : TypeWrapper<%T>(){}).type)?.let{ substitute.%L = it }",
-                                parameterClassName, parameterClassName, bundleName
+                                "val typeWrapper = object : TypeWrapper<%T>(){}",
+                                parameterClassName
+                            )
+                            .addStatement(
+                                "serializationService?.parseObject<%T>(res, typeWrapper.type)?.let{\n\tsubstitute.%L = it\n}",
+                                parameterClassName, bundleName
                             )
                             .endControlFlow()
                             .nextControlFlow("else")

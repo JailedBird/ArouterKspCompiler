@@ -30,7 +30,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.jump).setOnClickListener {
             ARouter.getInstance().build("/app/SecondActivtiy")
                 .withObject("arrayList", arrayListOf("1", "2", "3"))
+                .withObject("lateArrayList", arrayListOf("1", "2", "3"))
                 .withObject("list", mutableListOf("1", "2", "3", "4"))
+                .withObject("lateList", mutableListOf("1", "2", "3", "4"))
+                .withString("str", "Hello world, String")
+                .withString("lateStr", "Hello world. Late string")
                 .navigation(this)
         }
         
