@@ -64,8 +64,10 @@ class SecondActivtiy<T> : AppCompatActivity() {
     lateinit var lateArray: LinkedHashMap<String, ArrayList<Int>>
 
 
-    @Autowired
+    @Autowired(name = "hashSetttt")
     var hasSet = HashSet<LinkedHashMap<String, ArrayList<Int>>>()
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
