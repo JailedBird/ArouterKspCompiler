@@ -341,7 +341,7 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
                             )
                             .addStatement(
                                 "serializationService?.parseObject<%T>(res, typeWrapper.type)?.let{\n\tsubstitute.%L = it\n}",
-                                parameterClassName, bundleName
+                                parameterClassName, fieldName
                             )
                             .endControlFlow()
                             .nextControlFlow("else")
