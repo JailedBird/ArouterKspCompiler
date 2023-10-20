@@ -197,8 +197,8 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
             val propertyType = ksPropertyDeclaration.getKotlinPoetTTypeGeneric()
             if (annotation.name.isEmpty()) { // User has not set service path, then use byType.
                 injectMethodBuilder.addStatement(
-                    "substitute.$fieldName = %T.getInstance().navigation(%T::class.java)",
-                    AROUTER_CLASS_NAME, propertyType
+                    "substitute.$fieldName = %T.getInstance().navigation(%T::class.java) as %T",
+                    AROUTER_CLASS_NAME, ksPropertyDeclaration.getKotlinPoetTClass(), propertyType
                 )
             } else { // use byName
                 injectMethodBuilder.addStatement(
