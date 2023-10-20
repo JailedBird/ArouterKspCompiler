@@ -10,7 +10,13 @@ import com.alibaba.android.arouter.facade.annotation.Route
  * 2023/5/28 16:58
  */
 @Route(path = "/test/service")
-class TestServiceImpl : ITestService1, ITestService2 {
+class TestServiceImpl: ITestService1, ITestService2 {
+  override fun init(context: Context) {
+  }
+}
+
+@Route(path = "/test/service")
+class TestServiceImplGene<T> : ITestService1, ITestService2 {
   override fun init(context: Context) {
   }
 }
