@@ -12,6 +12,7 @@ import com.google.devtools.ksp.symbol.Origin.KOTLIN_LIB
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 import com.squareup.kotlinpoet.tags.TypeAliasTag
@@ -128,8 +129,9 @@ internal fun KSPropertyDeclaration.getKotlinPoetTTypeGeneric(): TypeName {
 
 /**
  *  such: val map = Map<String, String> ==> Map (used for kotlinpoet for %T)
+ *  such: val map = Map<String, String>? ==> Map (used for kotlinpoet for %T)
+ *  used in : public <T> T navigation(Class<? extends T> service) , For Java Class (No generic, and without nullable)
  * */
-@Suppress("unused")
-internal fun KSPropertyDeclaration.getKotlinPoetTType(): TypeName {
-    return this.type.resolve().toTypeName()
+internal fun KSPropertyDeclaration.getKotlinPoetTClass(): ClassName {
+    return this.type.resolve().toClassName()
 }
