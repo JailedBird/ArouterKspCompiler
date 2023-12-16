@@ -1,6 +1,8 @@
 # ArouterKspCompiler
 Arouter KSP annotation processor 
 
+[![GitHub stars](https://img.shields.io/github/stars/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/stargazers) [![GitHub forks](https://img.shields.io/github/forks/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/network/members) [![GitHub issues](https://img.shields.io/github/issues/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/issues) [![GitHub license](https://img.shields.io/github/license/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/blob/master/LICENSE)
+
 ksp分享笔记：[KSP注解处理器分享](https://www.yuque.com/jailedbird/gbmyp7/bs5t6e5zthrgfaua?singleDoc)
 
 ArouterKspCompiler插件是对ARouter官方注解处理器插件（com.alibaba:arouter-compiler）的[KSP（Kotlin Symbol Processing API）](https://kotlinlang.org/docs/ksp-overview.html)版本实现，旨在使用KSP提升kotlin注解的处理速度；
