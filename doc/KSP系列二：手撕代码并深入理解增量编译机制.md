@@ -199,7 +199,7 @@ override fun process(resolver: Resolver): List<KSAnnotated> {
 
 总结起来：
 
-- 从Resolver筛选出带有cn.jailedbird.spi.api.AutoService注解的元素，因为AutoService是类级别注解 ，所以简单做了KSClassDeclaration筛选；得到`elements:List<KSClassDeclaration>`，它描述本轮注解处理中，标记AutoService的类；
+- 从Resolver筛选出带有cn.jailedbird.spi.api.AutoService注解的元素，因为AutoService是类级别注解 ，所以简单做了KSClassDeclaration筛选；得到`elements:List<KSClassDeclaration>`，它描述本轮注解处理中，标记AutoService的类集合；
 
 - 针对单个标记注解的类，首先获取他的注解类（@Retention(AnnotationRetention.BINARY)， 然后获取其中的 `val target: KClass<*> = Unit::class` ；
 
