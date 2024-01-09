@@ -1,7 +1,8 @@
 # ArouterKspCompiler
 Arouter KSP annotation processor 
 
-[![GitHub stars](https://img.shields.io/github/stars/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/stargazers) [![GitHub forks](https://img.shields.io/github/forks/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/network/members) [![GitHub issues](https://img.shields.io/github/issues/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/issues) [![GitHub license](https://img.shields.io/github/license/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/stargazers) [![GitHub forks](https://img.shields.io/github/forks/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/network/members) [![GitHub issues](https://img.shields.io/github/issues/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/issues) [![GitHub license](https://img.shields.io/github/license/JailedBird/ArouterKspCompiler.svg)](https://github.com/JailedBird/ArouterKspCompiler/blob/master/LICENSE) [![](https://jitpack.io/v/JailedBird/ArouterKspCompiler.svg)](https://jitpack.io/#JailedBird/ArouterKspCompiler)
+
 
 ksp分享笔记：[KSP注解处理器分享](https://www.yuque.com/jailedbird/gbmyp7/bs5t6e5zthrgfaua?singleDoc)
 
