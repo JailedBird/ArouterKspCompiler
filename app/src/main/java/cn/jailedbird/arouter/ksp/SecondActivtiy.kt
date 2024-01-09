@@ -21,7 +21,7 @@ class SecondActivtiy<T> : AppCompatActivity() {
     @Autowired
     lateinit var lateStr: String
 
-    @Autowired
+/*    @Autowired
     lateinit var iProvider1: TestServiceImpl
 
     @Autowired
@@ -43,7 +43,7 @@ class SecondActivtiy<T> : AppCompatActivity() {
     lateinit var iProvider7: TestServiceImplGene<Int>
 
     @Autowired(name = "iProvider8")
-    var iProvider8: TestServiceImplGene<Int>? = null
+    var iProvider8: TestServiceImplGene<Int>? = null*/
 
     @Autowired
     var list = mutableListOf<String>()
