@@ -22,19 +22,19 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 dependencies {
     implementation 'com.alibaba:arouter-annotation:1.0.6'
 
-    implementation 'com.squareup:javapoet:1.8.0'
+    // implementation 'com.squareup:javapoet:1.8.0'
 
-    implementation 'org.apache.commons:commons-lang3:3.5'
-    implementation 'org.apache.commons:commons-collections4:4.1'
+    // implementation 'org.apache.commons:commons-lang3:3.5'
+    // implementation 'org.apache.commons:commons-collections4:4.1'
 
     implementation 'com.alibaba:fastjson:1.2.69'
 
     // ksp https://github.com/google/ksp/releases/tag/1.9.10-1.0.13
-    implementation 'com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.17'
+    implementation 'com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.21'
     // https://square.github.io/kotlinpoet/
-    implementation("com.squareup:kotlinpoet:1.16.0")
-    implementation("com.squareup:kotlinpoet-ksp:1.16.0")
-    implementation("com.squareup:kotlinpoet-metadata:1.16.0")
+    implementation("com.squareup:kotlinpoet:1.17.0")
+    implementation("com.squareup:kotlinpoet-ksp:1.17.0")
+    implementation("com.squareup:kotlinpoet-metadata:1.17.0")
 }
 
 apply from: rootProject.file("gradle/maven-publish.gradle")
