@@ -33,6 +33,10 @@ class MainActivity : AppCompatActivity() {
                 .withObject("lateArrayList", arrayListOf("1", "2", "3"))
                 .withObject("list", mutableListOf("1", "2", "3", "4"))
                 .withObject("lateList", mutableListOf("1", "2", "3", "4"))
+                .withObject("hashSet", hashSetOf(hashMapOf(
+                    "a" to arrayListOf(1, 2, 3, 4),
+                    "b" to arrayListOf(5, 6, 7, 8),
+                )))
                 .withString("str", "Hello world, String")
                 .withString("lateStr", "Hello world. Late string")
                 .navigation(this)

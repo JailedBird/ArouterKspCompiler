@@ -15,8 +15,8 @@ class TestServiceImpl: ITestService1, ITestService2 {
   }
 }
 
-@Route(path = "/test/service")
-class TestServiceImplGene<T> : ITestService1, ITestService2 {
+@Route(path = "/test/service_generic")
+class TestServiceImplGene<T> : ITestService3<T> {
   override fun init(context: Context) {
   }
 }
