@@ -193,15 +193,17 @@ class AutowiredSymbolProcessorProvider : SymbolProcessorProvider {
             val annotation = ksPropertyDeclaration.findAnnotationWithType<Autowired>()!!
             val fieldName = ksPropertyDeclaration.simpleName.asString()
             val propertyType = ksPropertyDeclaration.getKotlinPoetTTypeGeneric()
+            val propertyClazz = propertyType.copy(false)
+            val cast = if (propertyType.isNullable) "as? %T" else "as %T"
             if (annotation.name.isEmpty()) { // User has not set service path, then use byType.
                 injectMethodBuilder.addStatement(
-                    "substitute.$fieldName = %T.getInstance().navigation(%T::class.java) as %T",
-                    AROUTER_CLASS_NAME, ksPropertyDeclaration.getKotlinPoetTClass(), propertyType
+                    "substitute.$fieldName = %T.getInstance().navigation(%T::class.java) $cast",
+                    AROUTER_CLASS_NAME, ksPropertyDeclaration.getKotlinPoetTClass(), propertyClazz
                 )
             } else { // use byName
                 injectMethodBuilder.addStatement(
-                    "substitute.$fieldName = %T.getInstance().build(%S).navigation() as %T",
-                    AROUTER_CLASS_NAME, annotation.name, propertyType
+                    "substitute.$fieldName = %T.getInstance().build(%S).navigation() $cast",
+                    AROUTER_CLASS_NAME, annotation.name, propertyClazz
                 )
             }
             // Validator
