@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         findViewById<Button>(R.id.jump).setOnClickListener {
-            ARouter.getInstance().build("/app/SecondActivtiy")
+            ARouter.getInstance().build("/app/SecondActivity")
                 .withObject("arrayList", arrayListOf("1", "2", "3"))
                 .withObject("lateArrayList", arrayListOf("1", "2", "3"))
                 .withObject("list", mutableListOf("1", "2", "3", "4"))

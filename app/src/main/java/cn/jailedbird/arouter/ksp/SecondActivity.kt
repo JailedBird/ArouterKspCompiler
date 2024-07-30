@@ -9,8 +9,9 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 
-@Route(path = "/app/SecondActivtiy")
-class SecondActivtiy<T> : AppCompatActivity() {
+@Suppress("unused")
+@Route(path = "/app/SecondActivity")
+class SecondActivity : AppCompatActivity() {
 
     @Autowired
     var str: String = ""

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SecondActivtiy"
+            android:name=".SecondActivity"
             android:exported="true">
         </activity>
     </application>
