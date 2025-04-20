@@ -9,4 +9,5 @@ import com.alibaba.android.arouter.facade.template.IProvider
  * 2023/5/28 16:58
  */
 interface ITestService1 : IProvider {
+    fun debug()
 }
