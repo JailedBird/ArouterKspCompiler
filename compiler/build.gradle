@@ -32,9 +32,9 @@ dependencies {
     // ksp https://github.com/google/ksp/releases/tag/1.9.10-1.0.13
     implementation 'com.google.devtools.ksp:symbol-processing-api:2.1.20-1.0.31'
     // https://square.github.io/kotlinpoet/
-    implementation("com.squareup:kotlinpoet:1.17.0")
-    implementation("com.squareup:kotlinpoet-ksp:1.17.0")
-    implementation("com.squareup:kotlinpoet-metadata:1.17.0")
+    implementation("com.squareup:kotlinpoet:2.2.0")
+    implementation("com.squareup:kotlinpoet-ksp:2.2.0")
+    implementation("com.squareup:kotlinpoet-metadata:2.2.0")
 }
 
 apply from: rootProject.file("gradle/maven-publish.gradle")
